@@ -16,6 +16,7 @@ function bird_sightings_user_default_permissions() {
     'roles' => array(
       'administrator' => 'administrator',
       'anonymous user' => 'anonymous user',
+      'authenticated user' => 'authenticated user',
     ),
     'module' => 'restws',
   );
@@ -36,6 +37,8 @@ function bird_sightings_user_default_permissions() {
     'name' => 'access resource search_api_index',
     'roles' => array(
       'administrator' => 'administrator',
+      'anonymous user' => 'anonymous user',
+      'authenticated user' => 'authenticated user',
     ),
     'module' => 'restws',
   );
@@ -45,6 +48,8 @@ function bird_sightings_user_default_permissions() {
     'name' => 'access resource search_api_server',
     'roles' => array(
       'administrator' => 'administrator',
+      'anonymous user' => 'anonymous user',
+      'authenticated user' => 'authenticated user',
     ),
     'module' => 'restws',
   );
@@ -54,6 +59,8 @@ function bird_sightings_user_default_permissions() {
     'name' => 'access resource taxonomy_term',
     'roles' => array(
       'administrator' => 'administrator',
+      'anonymous user' => 'anonymous user',
+      'authenticated user' => 'authenticated user',
     ),
     'module' => 'restws',
   );
@@ -63,6 +70,8 @@ function bird_sightings_user_default_permissions() {
     'name' => 'access resource taxonomy_vocabulary',
     'roles' => array(
       'administrator' => 'administrator',
+      'anonymous user' => 'anonymous user',
+      'authenticated user' => 'authenticated user',
     ),
     'module' => 'restws',
   );
