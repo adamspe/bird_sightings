@@ -76,5 +76,23 @@ function bird_sightings_user_default_permissions() {
     'module' => 'restws',
   );
 
+  // Exported permission: 'create bird_sighting content'.
+  $permissions['create bird_sighting content'] = array(
+    'name' => 'create bird_sighting content',
+    'roles' => array(
+      'authenticated user' => 'authenticated user',
+    ),
+    'module' => 'node',
+  );
+
+  // Exported permission: 'edit own bird_sighting content'.
+  $permissions['edit own bird_sighting content'] = array(
+    'name' => 'edit own bird_sighting content',
+    'roles' => array(
+      'authenticated user' => 'authenticated user',
+    ),
+    'module' => 'node',
+  );
+
   return $permissions;
 }
