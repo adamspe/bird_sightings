@@ -5,3 +5,73 @@
  */
 
 include_once 'bird_sightings.features.inc';
+
+
+/**
+ * Implements hook_block_info()
+ */
+function bird_sightings_block_info() {
+    $blocks['sightings'] = array(
+        'info' => t('Bird Sightings'),
+    );
+    return $blocks;
+}
+
+/**
+ * Implements hook_block_view()
+ */
+function bird_sightings_block_view($delta='') {
+    $block = array();
+    switch($delta) {
+        case 'sightings':
+            global $user;
+            $path = drupal_get_path('module','bird_sightings');
+            $block['subject'] = t('Bird Sightings');
+
+            $block['content'] = array(
+                '#theme' => 'bird_sightings',
+                '#attached' => array(
+                    'css' => array(
+                        'https://maxcdn.bootstrapcdn.com/bootstrap/3.2.0/css/bootstrap.min.css' => array(
+                            'type' => 'external',
+                        ),
+                    ),
+                    'js' => array(
+                        'https://ajax.googleapis.com/ajax/libs/angularjs/1.2.19/angular.js',
+                        'https://ajax.googleapis.com/ajax/libs/angularjs/1.2.19/angular-resource.js',
+                        //'https://ajax.googleapis.com/ajax/libs/angularjs/1.0.7/angular.min.js',
+                        $path . '/js/app.js',
+                        $path . '/js/filters.js',
+                        $path . '/js/services.js',
+                        $path . '/js/directives.js',
+                        $path . '/js/controllers.js',
+                    )
+                ),
+            );
+            // Add CSRF token required by restWS.
+            // todo add uid
+            $js_settings = array(
+                'birdSightingsApp' => array(
+                    'restws_csrf_token' => drupal_get_token('restws'),
+                    'basePath' => url('', array('absolute' => TRUE)),
+                    'user_id' => $user->uid,
+                ),
+            );
+
+            drupal_add_js($js_settings, 'setting');
+            break;
+    }
+    return $block;
+}
+
+/**
+ * Implements hook_theme()
+ */
+function bird_sightings_theme() {
+    return array(
+        'bird_sightings' => array(
+            'template' => 'partials/bird-sightings',
+            'variables' => array(),
+        ),
+    );
+}

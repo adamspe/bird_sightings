@@ -74,7 +74,7 @@ function bird_sightings_field_default_field_bases() {
   // Exported field_base: 'field_bs_picture'
   $field_bases['field_bs_picture'] = array(
     'active' => 1,
-    'cardinality' => 1,
+    'cardinality' => 5,
     'deleted' => 0,
     'entity_types' => array(),
     'field_name' => 'field_bs_picture',
