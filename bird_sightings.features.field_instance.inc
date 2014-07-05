@@ -257,7 +257,7 @@ function bird_sightings_field_default_field_instances() {
           'map_scrollwheel' => 0,
           'map_width' => '600px',
           'map_zoomlevel' => 7,
-          'marker_icon' => 'http://localhost/~adamspe/ab-icon.png',
+          'marker_icon' => 'https://dl.dropboxusercontent.com/u/80257913/ab-icon.png',
         ),
         'type' => 'geolocation_googlemaps_dynamic',
         'weight' => 4,

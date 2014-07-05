@@ -6,7 +6,6 @@
 
 include_once 'bird_sightings.features.inc';
 
-
 /**
  * Implements hook_block_info()
  */
@@ -18,9 +17,24 @@ function bird_sightings_block_info() {
 }
 
 /**
+ * Given a machine_name return an associateive array tid->name
+ * of the first level children.
+ */
+function bird_sightings_load_terms($taxonomy) {
+    $vocabulary = taxonomy_vocabulary_machine_name_load($taxonomy);
+    $terms = array();
+    foreach(taxonomy_get_tree($vocabulary->vid,0,1 /* only one level*/) as $term) {
+        //print_r($term); print "<br />";
+        $terms[$term->tid] = $term->name;
+    }
+    return $terms;
+}
+
+/**
  * Implements hook_block_view()
  */
 function bird_sightings_block_view($delta='') {
+    global $user;
     $block = array();
     switch($delta) {
         case 'sightings':
@@ -32,14 +46,20 @@ function bird_sightings_block_view($delta='') {
                 '#theme' => 'bird_sightings',
                 '#attached' => array(
                     'css' => array(
+                        $path.'/lib/bootstrap/dist/css/bootstrap.min.css',
+                        $path.'/css/bird_sightings.css',
+                        /*
                         'https://maxcdn.bootstrapcdn.com/bootstrap/3.2.0/css/bootstrap.min.css' => array(
                             'type' => 'external',
-                        ),
+                        ),*/
                     ),
                     'js' => array(
-                        'https://ajax.googleapis.com/ajax/libs/angularjs/1.2.19/angular.js',
-                        'https://ajax.googleapis.com/ajax/libs/angularjs/1.2.19/angular-resource.js',
-                        //'https://ajax.googleapis.com/ajax/libs/angularjs/1.0.7/angular.min.js',
+                        //'https://ajax.googleapis.com/ajax/libs/angularjs/1.2.19/angular.js',
+                        //'https://ajax.googleapis.com/ajax/libs/angularjs/1.2.19/angular-resource.js',
+                        $path . '/lib/angular/angular.js',
+                        $path . '/lib/angular-resource/angular-resource.js',
+                        $path . '/lib/angular-bootstrap/ui-bootstrap.js',
+                        $path . '/lib/angular-bootstrap/ui-bootstrap-tpls.min.js',
                         $path . '/js/app.js',
                         $path . '/js/filters.js',
                         $path . '/js/services.js',
@@ -47,7 +67,7 @@ function bird_sightings_block_view($delta='') {
                         $path . '/js/controllers.js',
                     )
                 ),
-            );
+            );            
             // Add CSRF token required by restWS.
             // todo add uid
             $js_settings = array(
@@ -55,6 +75,12 @@ function bird_sightings_block_view($delta='') {
                     'restws_csrf_token' => drupal_get_token('restws'),
                     'basePath' => url('', array('absolute' => TRUE)),
                     'user_id' => $user->uid,
+                    'user_name' => $user->uid != 0 ? $user->name : NULL,
+                    // it seems regardless of the permissions set on the taxonomy_vocabulary/term resources
+                    // non-admin users receive a 403 when trying to query them so load this info up
+                    // and deliver it separately.
+                    'bird_categories' => bird_sightings_load_terms('bird_categories'),
+                    'bird_species' => bird_sightings_load_terms('bird_species'),
                 ),
             );
 
