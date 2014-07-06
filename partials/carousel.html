@@ -9,7 +9,7 @@
             <a href="{{sighting.url}}"><img ng-src="{{sighting.image}}" style="margin:auto; height:500px;"></a>
             <div class="carousel-caption">
               <h4>{{sighting.title}}</h4>
-              <p>{{sighting.species}} ({{sighting.category}})</p>
+              <p>{{sighting.species}} ({{sighting.category}}) [{{(sighting.field_bs_when*1000) | date:'short'}}]</p>
             </div>
           </slide>
         </carousel>

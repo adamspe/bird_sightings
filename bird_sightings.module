@@ -138,6 +138,11 @@ function bird_sightings_map_data() {
         // confusing per documentation I would have assumed species_tid not just tid
         $query->fieldCondition('field_bs_species','tid',explode(",",$_GET['species_ids']),"IN");
     }
+    $days = isset($_GET['days']) ? intval($_GET['days']) : 30; // approximately the past month
+    $createdSince = (time() - ($days * 60 * 60 * 24));
+    $query->propertyCondition('created',$createdSince,'>=');
+    
+
     $result = $query->execute();
     $data = array();
     if(isset($result['node'])) {
@@ -151,6 +156,7 @@ function bird_sightings_map_data() {
                 'category_id' => $node->field_bs_grouping['und'][0]['tid'],
                 'lat' => $node->field_bs_where['und'][0]['lat'],
                 'lng' => $node->field_bs_where['und'][0]['lng'],
+                'when' => $node->field_bs_when['und'][0],
             );
         }
     }

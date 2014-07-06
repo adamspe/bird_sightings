@@ -20,11 +20,11 @@
     height: 500px;
 }
 #clusterMap img {
+    /* without this the google map controls are broken */
     max-width: none;
 }
 #content {
-    /*width: auto;*/
 }
 .bs-main-content {
-    width:100%;
+    width: 100%;
 }

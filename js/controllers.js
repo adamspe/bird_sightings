@@ -12,7 +12,7 @@ angular.module('birdSightingsApp.controllers', [
         $scope.carousel = {
             mine: false,
             minePopover: 'Show Just My Sightings',
-            queryParams: {limit: 10, sort: 'created', direction: 'DESC'},
+            queryParams: {limit: 20, sort: 'created', direction: 'DESC'},
             interval: 5000,
         };
         $scope.justMine = function() {
@@ -41,11 +41,11 @@ angular.module('birdSightingsApp.controllers', [
         }
         $scope.reload();
 }])
-.controller('MapCtrl',['$scope','$http','TaxonomyService',
-    function($scope,$http,TaxonomyService) {
+.controller('MapCtrl',['$scope','$http','TaxonomyService','$filter',
+    function($scope,$http,TaxonomyService,$filter) {
         var species = TaxonomyService.getVocabularyTerms(birdSightingsApp.SPECIES_VOCABULARY),
             id;
-        $scope.httpConfig = {params: {species_ids: undefined}};
+        $scope.httpConfig = {params: {species_ids: undefined, days: 30}};
         $scope.species = {'All Species' : undefined};
         for(id in species) {
             $scope.species[species[id]] = id;
@@ -62,7 +62,10 @@ angular.module('birdSightingsApp.controllers', [
                     markers.push(new google.maps.Marker({
                         position: new google.maps.LatLng(sighting.lat,sighting.lng),
                         icon: 'https://dl.dropboxusercontent.com/u/80257913/ab-icon.png',
-                        title: sighting.title+' ('+TaxonomyService.getVocabularyTermById(birdSightingsApp.SPECIES_VOCABULARY,sighting.species_id)+") ["+TaxonomyService.getVocabularyTermById(birdSightingsApp.CATEGORIES_VOCABULARY,sighting.category_id)+"]"
+                        title: sighting.title+' ('+
+                               TaxonomyService.getVocabularyTermById(birdSightingsApp.SPECIES_VOCABULARY,sighting.species_id)+") ["+
+                               TaxonomyService.getVocabularyTermById(birdSightingsApp.CATEGORIES_VOCABULARY,sighting.category_id)+"] "+
+                               $filter('date')((sighting.created*1000),'medium')
                     }));
                 });
                 $scope.markerClusterer.addMarkers(markers);
