@@ -4,9 +4,16 @@ angular.module('birdSightingsApp.controllers', [
 .run(['$rootScope',function($rootScope){
     $rootScope.userName = birdSightingsApp.getUserName();
 }])
+/**
+ * Menu controller (nothing to control at the moment).
+ */
 .controller('MenuCtrl',['$scope',function($scope){
 
 }])
+/**
+ * Simple controller for the sightings carousel view, fetches the
+ * most recent 20 (max) sightings with images.
+ */
 .controller('SightingsCtrl',['$scope','Nodes','ObjectService','TaxonomyService',
     function($scope,Nodes,ObjectService,TaxonomyService){
         $scope.carousel = {
@@ -41,12 +48,15 @@ angular.module('birdSightingsApp.controllers', [
         }
         $scope.reload();
 }])
+/**
+ * Simple controller for the map view. 
+ */
 .controller('MapCtrl',['$scope','$http','TaxonomyService','$filter',
     function($scope,$http,TaxonomyService,$filter) {
         var species = TaxonomyService.getVocabularyTerms(birdSightingsApp.SPECIES_VOCABULARY),
             id;
         $scope.httpConfig = {params: {species_ids: undefined, days: 30}};
-        $scope.species = {'All Species' : undefined};
+        $scope.species = {'All' : undefined};
         for(id in species) {
             $scope.species[species[id]] = id;
         }

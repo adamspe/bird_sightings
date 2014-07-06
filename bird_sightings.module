@@ -111,14 +111,6 @@ function bird_sightings_theme() {
  */
 function bird_sightings_menu() {
     $items = array();
-    /*
-    $items['bird-sightings/%'] = array(
-        'title' => 'Test',
-        'page callback' => 'bird_sightings_test',
-        'page arguments' => array(1),
-        'access callback' => true,
-        'type' => MENU_LOCAL_TASK,
-    );*/
     $items['bird-sightings/map-data'] = array(
         'title' => 'Bird Sightings Map Data',
         'page callback' => 'bird_sightings_map_data',
@@ -128,6 +120,13 @@ function bird_sightings_menu() {
     return $items;
 }
 
+/**
+ * Simple URL that performs a search for bird_sightings and
+ * returns JSON.
+ * Query Params:
+ * species_ids - a comma-delimited list of species ids to return (default all species).
+ * days - the number of most recent days to return sightings for (default 30).
+ */
 function bird_sightings_map_data() {
     // getting -all- data in a real world would probably put some
     // time constraints on it, i.e.
@@ -161,43 +160,5 @@ function bird_sightings_map_data() {
         }
     }
     drupal_json_output($data);
-    drupal_exit();
-}
-
-function bird_sightings_test($titleSw='') {
-    //print "running a query term {term}<br />";
-    //$result = db_query("SELECT nid,title FROM {node} WHERE title LIKE :title LIMIT 5", array(":title" => $term.'%'))->fetchAll();
-    $query = new EntityFieldQuery();
-    $result = $query->entityCondition('entity_type','node')
-    ->propertyCondition('type','bird_sighting')
-    ->propertyCondition('title',$titleSw.'%','LIKE')
-    ->execute();
-    if(isset($result['node'])) {
-        $nids = array_keys($result['node']);
-        // load only specific fields
-
-        $fields = field_info_instances('node','bird_sighting');
-        $field_id = $fields['field_bs_where']['field_id'];
-        $nodes = $result['node'];
-        field_attach_load('node',$nodes, FIELD_LOAD_CURRENT, array('field_id' => $field_id));
-
-        
-        // load whole nodes
-        $nodes = node_load_multiple($nids);
-
-        //foreach($nodes as $nid => $node) {
-        //$nodes = array();
-        foreach($nids as $nid => $node) {
-            $wrapped = entity_metadata_wrapper('node',$node);
-            print $wrapped->field_bs_species->tid->value()."\n";
-            //print $wrapped->author->mail->value()."\n";
-            print $wrapped->field_bs_picture->value()[0]['uri']."\n";
-            //print_r($wrapped->field_bs_where->value());
-        }
-
-    } else {
-        $nodes = array(); // empty result
-    }
-    drupal_json_output(array_values($nodes));
     drupal_exit();
 }
