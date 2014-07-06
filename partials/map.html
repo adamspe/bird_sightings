@@ -1,0 +1,12 @@
+<div ng-controller="MapCtrl">
+    <form class="form-horizontal" role="form" name="mapControlForm">
+        <div class="form-group">
+            <label for="speciesInput" class="col-sm-2 control-label">Species:</label>
+            <div class="col-sm-4">
+            <select id="speciesInput" class="form-control" ng-model="httpConfig.params.species_ids" ng-change="reloadMapData()" ng-options="value as key for (key , value) in species">
+            </select>
+            </div>
+        </div>
+        <div class="bs-main-content" id="clusterMap"></div>
+    </form>
+</div>

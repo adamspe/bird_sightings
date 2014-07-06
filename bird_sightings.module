@@ -56,7 +56,10 @@ function bird_sightings_block_view($delta='') {
                     'js' => array(
                         //'https://ajax.googleapis.com/ajax/libs/angularjs/1.2.19/angular.js',
                         //'https://ajax.googleapis.com/ajax/libs/angularjs/1.2.19/angular-resource.js',
+                        'https://maps.googleapis.com/maps/api/js?sensor=false',
+                        'http://google-maps-utility-library-v3.googlecode.com/svn/trunk/markerclusterer/src/markerclusterer.js',
                         $path . '/lib/angular/angular.js',
+                        $path . '/lib/angular-route/angular-route.js',
                         $path . '/lib/angular-resource/angular-resource.js',
                         $path . '/lib/angular-bootstrap/ui-bootstrap.js',
                         $path . '/lib/angular-bootstrap/ui-bootstrap-tpls.min.js',
@@ -73,6 +76,7 @@ function bird_sightings_block_view($delta='') {
             $js_settings = array(
                 'birdSightingsApp' => array(
                     'restws_csrf_token' => drupal_get_token('restws'),
+                    'modulePath' => $path,
                     'basePath' => url('', array('absolute' => TRUE)),
                     'user_id' => $user->uid,
                     'user_name' => $user->uid != 0 ? $user->name : NULL,
@@ -100,4 +104,94 @@ function bird_sightings_theme() {
             'variables' => array(),
         ),
     );
+}
+
+/**
+ * Implements hook_menu()
+ */
+function bird_sightings_menu() {
+    $items = array();
+    /*
+    $items['bird-sightings/%'] = array(
+        'title' => 'Test',
+        'page callback' => 'bird_sightings_test',
+        'page arguments' => array(1),
+        'access callback' => true,
+        'type' => MENU_LOCAL_TASK,
+    );*/
+    $items['bird-sightings/map-data'] = array(
+        'title' => 'Bird Sightings Map Data',
+        'page callback' => 'bird_sightings_map_data',
+        'access callback' => true,
+        'type' => MENU_LOCAL_TASK,
+    );
+    return $items;
+}
+
+function bird_sightings_map_data() {
+    // getting -all- data in a real world would probably put some
+    // time constraints on it, i.e.
+    $query = new EntityFieldQuery();
+    $query->entityCondition('entity_type','node')
+    ->propertyCondition('type','bird_sighting');
+    if(isset($_GET['species_ids'])) {
+        // confusing per documentation I would have assumed species_tid not just tid
+        $query->fieldCondition('field_bs_species','tid',explode(",",$_GET['species_ids']),"IN");
+    }
+    $result = $query->execute();
+    $data = array();
+    if(isset($result['node'])) {
+        $nodes = node_load_multiple(array_keys($result['node']));
+        foreach($nodes as $node) {
+            $data[] = (object)array(
+                'nid' => $node->nid,
+                'title' => $node->title,
+                'created' => $node->created,
+                'species_id' => $node->field_bs_species['und'][0]['tid'],
+                'category_id' => $node->field_bs_grouping['und'][0]['tid'],
+                'lat' => $node->field_bs_where['und'][0]['lat'],
+                'lng' => $node->field_bs_where['und'][0]['lng'],
+            );
+        }
+    }
+    drupal_json_output($data);
+    drupal_exit();
+}
+
+function bird_sightings_test($titleSw='') {
+    //print "running a query term {term}<br />";
+    //$result = db_query("SELECT nid,title FROM {node} WHERE title LIKE :title LIMIT 5", array(":title" => $term.'%'))->fetchAll();
+    $query = new EntityFieldQuery();
+    $result = $query->entityCondition('entity_type','node')
+    ->propertyCondition('type','bird_sighting')
+    ->propertyCondition('title',$titleSw.'%','LIKE')
+    ->execute();
+    if(isset($result['node'])) {
+        $nids = array_keys($result['node']);
+        // load only specific fields
+
+        $fields = field_info_instances('node','bird_sighting');
+        $field_id = $fields['field_bs_where']['field_id'];
+        $nodes = $result['node'];
+        field_attach_load('node',$nodes, FIELD_LOAD_CURRENT, array('field_id' => $field_id));
+
+        
+        // load whole nodes
+        $nodes = node_load_multiple($nids);
+
+        //foreach($nodes as $nid => $node) {
+        //$nodes = array();
+        foreach($nids as $nid => $node) {
+            $wrapped = entity_metadata_wrapper('node',$node);
+            print $wrapped->field_bs_species->tid->value()."\n";
+            //print $wrapped->author->mail->value()."\n";
+            print $wrapped->field_bs_picture->value()[0]['uri']."\n";
+            //print_r($wrapped->field_bs_where->value());
+        }
+
+    } else {
+        $nodes = array(); // empty result
+    }
+    drupal_json_output(array_values($nodes));
+    drupal_exit();
 }

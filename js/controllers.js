@@ -4,6 +4,9 @@ angular.module('birdSightingsApp.controllers', [
 .run(['$rootScope',function($rootScope){
     $rootScope.userName = birdSightingsApp.getUserName();
 }])
+.controller('MenuCtrl',['$scope',function($scope){
+
+}])
 .controller('SightingsCtrl',['$scope','Nodes','ObjectService','TaxonomyService',
     function($scope,Nodes,ObjectService,TaxonomyService){
         $scope.carousel = {
@@ -37,4 +40,38 @@ angular.module('birdSightingsApp.controllers', [
             });
         }
         $scope.reload();
+}])
+.controller('MapCtrl',['$scope','$http','TaxonomyService',
+    function($scope,$http,TaxonomyService) {
+        var species = TaxonomyService.getVocabularyTerms(birdSightingsApp.SPECIES_VOCABULARY),
+            id;
+        $scope.httpConfig = {params: {species_ids: undefined}};
+        $scope.species = {'All Species' : undefined};
+        for(id in species) {
+            $scope.species[species[id]] = id;
+        }
+        $scope.reloadMapData = function() {
+            $http.get('bird-sightings/map-data',$scope.httpConfig).success(function(sightings){
+                if($scope.markerClusterer) {
+                    $scope.markerClusterer.clearMarkers();
+                } else {
+                    $scope.markerClusterer = new MarkerClusterer($scope.map,[]);
+                }
+                var markers = [];
+                angular.forEach(sightings,function(sighting){
+                    markers.push(new google.maps.Marker({
+                        position: new google.maps.LatLng(sighting.lat,sighting.lng),
+                        icon: 'https://dl.dropboxusercontent.com/u/80257913/ab-icon.png',
+                        title: sighting.title+' ('+TaxonomyService.getVocabularyTermById(birdSightingsApp.SPECIES_VOCABULARY,sighting.species_id)+") ["+TaxonomyService.getVocabularyTermById(birdSightingsApp.CATEGORIES_VOCABULARY,sighting.category_id)+"]"
+                    }));
+                });
+                $scope.markerClusterer.addMarkers(markers);
+            });
+        }
+        $scope.map = new google.maps.Map(document.getElementById('clusterMap'), {
+          zoom: 4,
+          center: new google.maps.LatLng(38.8402805, -97.61142369999999),
+          mapTypeId: google.maps.MapTypeId.ROADMAP
+        });
+        $scope.reloadMapData();
 }]);

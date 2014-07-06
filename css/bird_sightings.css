@@ -1,3 +1,30 @@
+#bs-main-menu {
+    float: left;
+}
 #sidebar-first {
   display: none;
+}
+#bs-main-container {
+    padding: 6px;
+    border-width: 1px;
+    border-style: solid;
+    border-color: #ccc #ccc #999 #ccc;
+    -webkit-box-shadow: rgba(64, 64, 64, 0.5) 0 2px 5px;
+    -moz-box-shadow: rgba(64, 64, 64, 0.5) 0 2px 5px;
+    box-shadow: rgba(64, 64, 64, 0.1) 0 2px 5px;
+    -webkit-border-radius: 5px;
+    -moz-border-radius: 5px;
+    border-radius: 5px;
+}
+#clusterMap {
+    height: 500px;
+}
+#clusterMap img {
+    max-width: none;
+}
+#content {
+    /*width: auto;*/
+}
+.bs-main-content {
+    width:100%;
 }
