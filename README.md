@@ -2,9 +2,19 @@ bird_sightings
 ==============
 
 A relatively simple Drupal 7 module that implements a bird sightings web site.
+This was really just a learning exercise so isn't anything fancy or truly
+complete.
 
 Uses bower for JS/CSS dependencies so need to run 'bower install' before
 things are expected to function.
+
+issues:
+===============
+ngRoute seems to hijack URLs when logged in as an administrator (only admin, odd).
+If logged in as an admin links to Drupal pages simply aren't working.
+The 'Log' tab does though so it can be clicked on and then on admin links.
+Haven't looked into why yet but functions fine when not logged in or
+logged in as a regular user.
 
 dependencies:
 ================
