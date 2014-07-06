@@ -1,0 +1,164 @@
+<?php
+/**
+ * @file
+ * Code for the Bird Sightings feature.
+ */
+
+include_once 'bird_sightings.features.inc';
+
+/**
+ * Implements hook_block_info()
+ */
+function bird_sightings_block_info() {
+    $blocks['sightings'] = array(
+        'info' => t('Bird Sightings'),
+    );
+    return $blocks;
+}
+
+/**
+ * Given a machine_name return an associateive array tid->name
+ * of the first level children.
+ */
+function bird_sightings_load_terms($taxonomy) {
+    $vocabulary = taxonomy_vocabulary_machine_name_load($taxonomy);
+    $terms = array();
+    foreach(taxonomy_get_tree($vocabulary->vid,0,1 /* only one level*/) as $term) {
+        //print_r($term); print "<br />";
+        $terms[$term->tid] = $term->name;
+    }
+    return $terms;
+}
+
+/**
+ * Implements hook_block_view()
+ */
+function bird_sightings_block_view($delta='') {
+    global $user;
+    $block = array();
+    switch($delta) {
+        case 'sightings':
+            global $user;
+            $path = drupal_get_path('module','bird_sightings');
+            $block['subject'] = t('Bird Sightings');
+
+            $block['content'] = array(
+                '#theme' => 'bird_sightings',
+                '#attached' => array(
+                    'css' => array(
+                        $path.'/lib/bootstrap/dist/css/bootstrap.min.css',
+                        $path.'/css/bird_sightings.css',
+                        /*
+                        'https://maxcdn.bootstrapcdn.com/bootstrap/3.2.0/css/bootstrap.min.css' => array(
+                            'type' => 'external',
+                        ),*/
+                    ),
+                    'js' => array(
+                        //'https://ajax.googleapis.com/ajax/libs/angularjs/1.2.19/angular.js',
+                        //'https://ajax.googleapis.com/ajax/libs/angularjs/1.2.19/angular-resource.js',
+                        'https://maps.googleapis.com/maps/api/js?sensor=false',
+                        'http://google-maps-utility-library-v3.googlecode.com/svn/trunk/markerclusterer/src/markerclusterer.js',
+                        $path . '/lib/angular/angular.js',
+                        $path . '/lib/angular-route/angular-route.js',
+                        $path . '/lib/angular-resource/angular-resource.js',
+                        $path . '/lib/angular-bootstrap/ui-bootstrap.js',
+                        $path . '/lib/angular-bootstrap/ui-bootstrap-tpls.min.js',
+                        $path . '/js/app.js',
+                        $path . '/js/filters.js',
+                        $path . '/js/services.js',
+                        $path . '/js/directives.js',
+                        $path . '/js/controllers.js',
+                    )
+                ),
+            );            
+            // Add CSRF token required by restWS.
+            // todo add uid
+            $js_settings = array(
+                'birdSightingsApp' => array(
+                    'restws_csrf_token' => drupal_get_token('restws'),
+                    'modulePath' => $path,
+                    'basePath' => url('', array('absolute' => TRUE)),
+                    'user_id' => $user->uid,
+                    'user_name' => $user->uid != 0 ? $user->name : NULL,
+                    // it seems regardless of the permissions set on the taxonomy_vocabulary/term resources
+                    // non-admin users receive a 403 when trying to query them so load this info up
+                    // and deliver it separately.
+                    'bird_categories' => bird_sightings_load_terms('bird_categories'),
+                    'bird_species' => bird_sightings_load_terms('bird_species'),
+                ),
+            );
+
+            drupal_add_js($js_settings, 'setting');
+            break;
+    }
+    return $block;
+}
+
+/**
+ * Implements hook_theme()
+ */
+function bird_sightings_theme() {
+    return array(
+        'bird_sightings' => array(
+            'template' => 'partials/bird-sightings',
+            'variables' => array(),
+        ),
+    );
+}
+
+/**
+ * Implements hook_menu()
+ */
+function bird_sightings_menu() {
+    $items = array();
+    $items['bird-sightings/map-data'] = array(
+        'title' => 'Bird Sightings Map Data',
+        'page callback' => 'bird_sightings_map_data',
+        'access callback' => true,
+        'type' => MENU_LOCAL_TASK,
+    );
+    return $items;
+}
+
+/**
+ * Simple URL that performs a search for bird_sightings and
+ * returns JSON.
+ * Query Params:
+ * species_ids - a comma-delimited list of species ids to return (default all species).
+ * days - the number of most recent days to return sightings for (default 30).
+ */
+function bird_sightings_map_data() {
+    // getting -all- data in a real world would probably put some
+    // time constraints on it, i.e.
+    $query = new EntityFieldQuery();
+    $query->entityCondition('entity_type','node')
+    ->propertyCondition('type','bird_sighting');
+    if(isset($_GET['species_ids'])) {
+        // confusing per documentation I would have assumed species_tid not just tid
+        $query->fieldCondition('field_bs_species','tid',explode(",",$_GET['species_ids']),"IN");
+    }
+    $days = isset($_GET['days']) ? intval($_GET['days']) : 30; // approximately the past month
+    $createdSince = (time() - ($days * 60 * 60 * 24));
+    $query->propertyCondition('created',$createdSince,'>=');
+    
+
+    $result = $query->execute();
+    $data = array();
+    if(isset($result['node'])) {
+        $nodes = node_load_multiple(array_keys($result['node']));
+        foreach($nodes as $node) {
+            $data[] = (object)array(
+                'nid' => $node->nid,
+                'title' => $node->title,
+                'created' => $node->created,
+                'species_id' => $node->field_bs_species['und'][0]['tid'],
+                'category_id' => $node->field_bs_grouping['und'][0]['tid'],
+                'lat' => $node->field_bs_where['und'][0]['lat'],
+                'lng' => $node->field_bs_where['und'][0]['lng'],
+                'when' => $node->field_bs_when['und'][0],
+            );
+        }
+    }
+    drupal_json_output($data);
+    drupal_exit();
+}

@@ -1,0 +1,19 @@
+<div ng-controller="SightingsCtrl">
+    <ul class="nav nav-pills">
+      <li ng-show="userName" ng-class="{active: carousel.mine}"><a popover="{{carousel.minePopover}}" popover-trigger="mouseenter" popover-placement="top" ng-click="justMine()"><span class="glyphicon glyphicon-user"></a></li>
+    </ul>
+    <div class="bs-main-content">
+    <aside ng-show="sightings.length > 0">
+        <carousel interval="carousel.interval">
+          <slide ng-repeat="sighting in sightings" active="slide.active">
+            <a href="{{sighting.url}}"><img ng-src="{{sighting.image}}" style="margin:auto; height:500px;"></a>
+            <div class="carousel-caption">
+              <h4>{{sighting.title}}</h4>
+              <p>{{sighting.species}} ({{sighting.category}}) [{{(sighting.field_bs_when*1000) | date:'short'}}]</p>
+            </div>
+          </slide>
+        </carousel>
+    </aside>
+  </div>
+  
+</div>
