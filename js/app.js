@@ -19,7 +19,9 @@ angular.module('birdSightingsApp',[
 .config(['$routeProvider',function($routeProvider) {
     $routeProvider.when('/carousel', {templateUrl: birdSightingsApp.getModuleUrl()+'/partials/carousel.html'})
     $routeProvider.when('/map', {templateUrl: birdSightingsApp.getModuleUrl()+'/partials/map.html'})
-    $routeProvider.otherwise({redirectTo: '/map'});
+    $routeProvider.when('/', {templateUrl: birdSightingsApp.getModuleUrl()+'/partials/map.html'})
+    // don't use otherwise, or it will break local links
+    //$routeProvider.otherwise({redirectTo: '/map'});
 }])
 .config(['$httpProvider',function($httpProvider){
     $httpProvider.defaults.headers.common['X-CSRF-Token'] = Drupal.settings.birdSightingsApp.restws_csrf_token;
