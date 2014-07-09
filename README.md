@@ -63,9 +63,10 @@ a pile of others (those above).  Click "Continue."
 When complete you'll be notified that the Date API needs you to configure some stuff so click the
 provided "site timezone and first day of week settings" link, make any changes necessary and click
 "Save configuration."  You'll now have lost the other link about date formats needing to be setup so
-browser to "Configuration" and click "Date and time" in the "REGIONAL AND LANGUAGE" section.  Make
+browse to "Configuration" and click "Date and time" in the "REGIONAL AND LANGUAGE" section.  Make
 any changes you feel are important and click "Save configuration."  Even if you change nothing click
-"Save configuration."
+"Save configuration."  (**Note**: The "Short" format here is what is used on the recent bird sightings
+view so you'll probably want to change that one, since the default is dumb).
 
 OK, now you just need to create a home page and configure it.  If you visit the "Structure" tab you should
 now see you have a new "Bird Sighting" Content type and two new Taxonomy Vocaularies.  If you visited Features
@@ -85,8 +86,9 @@ block and configure it such that it only shows up on the page you created and Sa
 "Bird Sightings" block to the "Content" area.  The only other thing the page should contain is the "User login"
 block in the "Sidebar first" area.  So either remove the Navigation/Search blocks or make it so they don't show
 on your empty page.  When finished with that don't forget to scroll down to the bottom of the "Blocks" page and
-click "Save blocks" so that things actually stick. (Note: I've had to do the moving of blocks repeatedly even after
-clicking "Save blocks" since Drupal seems to lose some changes).
+click "Save blocks" so that things actually stick. (**Note:** I've had to do the moving of blocks repeatedly even after
+clicking "Save blocks" since Drupal seems to lose some changes so you may just want to revisit the blocks config and
+make sure your changes actually took, you may need to re-apply them).
 
 **Issue:** _The module was intended to come with a pre-canned set of "Bird categories" but that's not coming along so you'll
 need to create at least one category so that sightings can be created.  Visit "Structure" > "Taxonomy" and click the
@@ -106,11 +108,13 @@ sightings you add (in more places) the more interesting the map will look, and t
 on your home page or there won't be anything to show, if so visit /user/login).  Logout obviously logs you out.
 - Image: Will present you with an image carousel of the 20 most recent sightings (not fancy here, will fetch 20 from the server
 and show you those that have at least one image associated with them).
-- Map Icon: Will show the marker cluster map of recent sightings, you can pick from species and give it a # of days, each UI change
+- Map: Will show the marker cluster map of recent sightings, you can pick from species and give it a # of days, each UI change
 will refresh the data from the server and update the map.
 - List: Will take you to the "Recent Bird Sightings" View/RSS feed where you can browse them as the Drupal view is configured to
 present them.
 - Pencil: Will allow yo uto create new sightings.
+
+Hovering your mouse over each will give you popover text explaining what they are.
 
 Users not logged in are obviously read-only.  Logged in users can create/edit their own sightings but not other's sightings
 (aside from of course the admin user).
