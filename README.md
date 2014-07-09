@@ -20,7 +20,7 @@ As admin visit the "Appearance" tab and click "Install new theme".  Paste the ab
 "Enable and set default" for the "Tweme" theme in the "DISABLED THEMES" area of the page.
 
 ## Drupal Modules
-As admin vis the "Modules" tab and click "Install new module", paste a URL from the list below into
+As admin visit the "Modules" tab and click "Install new module", paste a URL from the list below into
 the "Install from a URL" box and click "Install."  Lather rinse and repeat once for each URL below.
 
 - [http://ftp.drupal.org/files/projects/date-7.x-2.7.tar.gz](http://ftp.drupal.org/files/projects/date-7.x-2.7.tar.gz)
