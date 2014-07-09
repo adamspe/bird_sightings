@@ -35,14 +35,20 @@ the "Install from a URL" box and click "Install."  Lather rinse and repeat once 
 
 Clone this module into an appropriate 'modules' directory.
 E.g.
-	% cd <drupal htdocs>/sites/default
-	% mkdir default
-	% cd default
-	% git clone https://github.com/adamspe/bird_sightings.git
+
+```
+% cd <drupal htdocs>/sites/default
+% mkdir default
+% cd default
+% git clone https://github.com/adamspe/bird_sightings.git
+```
 
 Then run bower install
-	% cd bird_sightings
-	% bower install
+
+```
+% cd bird_sightings
+% bower install
+```
 
 If you don't have bower then visit [bower](http://bower.io/) and get it (will need Node, npm and Git as well since
 bower is written in node).
