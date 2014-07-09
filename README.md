@@ -38,8 +38,8 @@ E.g.
 
 ```
 % cd <drupal htdocs>/sites/default
-% mkdir default
-% cd default
+% mkdir modules
+% cd modules
 % git clone https://github.com/adamspe/bird_sightings.git
 ```
 
@@ -53,8 +53,8 @@ Then run bower install
 If you don't have bower then visit [bower](http://bower.io/) and get it (will need Node, npm and Git as well since
 bower is written in node).
 
-Once you have both the dependencies and this module installed Drupal then visit the
-"Modules" tab again and this time scroll down to the "Birding" section of the modules page.
+Once you have both the dependencies and this module cloned into a modules directory then visit the
+"Modules" tab again and this time scroll down to the shiny new "Birding" section of the modules page.
 You should see that all of its dependencies are listed and some wil be disabled and others enabled. 
 Check the "ENABLED" checkbox next to the "Bird Sightings" module, scroll to the bottom and
 click the "Save Configuration" button.  You'll be prompted because enabling this module will enable
@@ -63,10 +63,10 @@ a pile of others (those above).  Click "Continue."
 When complete you'll be notified that the Date API needs you to configure some stuff so click the
 provided "site timezone and first day of week settings" link, make any changes necessary and click
 "Save configuration."  You'll now have lost the other link about date formats needing to be setup so
-browse to "Configuration" and click "Date and time" in the "REGIONAL AND LANGUAGE" section.  Make
-any changes you feel are important and click "Save configuration."  Even if you change nothing click
-"Save configuration."  (**Note**: The "Short" format here is what is used on the recent bird sightings
-view so you'll probably want to change that one, since the default is dumb).
+browse to "Configuration" and click "Date and time" in the "REGIONAL AND LANGUAGE" section.
+Review at least the "Short" format here picking your favorite (the default is dumb)and click 
+"Save configuration."  (The "Short" format is what is used on the new recent bird sightings
+view and the default is confusing displaying just the hour in 24 hour format or some such).
 
 OK, now you just need to create a home page and configure it.  If you visit the "Structure" tab you should
 now see you have a new "Bird Sighting" Content type and two new Taxonomy Vocaularies.  If you visited Features
@@ -87,8 +87,8 @@ block and configure it such that it only shows up on the page you created and Sa
 block in the "Sidebar first" area.  So either remove the Navigation/Search blocks or make it so they don't show
 on your empty page.  When finished with that don't forget to scroll down to the bottom of the "Blocks" page and
 click "Save blocks" so that things actually stick. (**Note:** I've had to do the moving of blocks repeatedly even after
-clicking "Save blocks" since Drupal seems to lose some changes so you may just want to revisit the blocks config and
-make sure your changes actually took, you may need to re-apply them).
+clicking "Save blocks" since Drupal seems to lose some changes when moving and configuring blocks at one time
+so you may just want to revisit the blocks config and make sure your changes actually took, you may need to re-apply them).
 
 **Issue:** _The module was intended to come with a pre-canned set of "Bird categories" but that's not coming along so you'll
 need to create at least one category so that sightings can be created.  Visit "Structure" > "Taxonomy" and click the
@@ -99,8 +99,8 @@ Now when you visit the home page you should see an empty map of the US displayed
 
 Click the pencil icon with the popover text of "Add new sighting" to create a new sighting.  A picture isn't required
 but give each sighting one anyway, this way they can show up in the carousel view.  (**Warning:** There seems to be a bug
-in Drupal itself where the "Upload" button when adding files doesn't always work so when you add a picture it's best
-to just pick the file but don't click the "Upload" button, the image will be added when the sighting is created).  The more
+in Drupal itself where the "Upload" button when adding files doesn't always work, and often hangs/spins, so when you add a picture it's best
+to just pick the file and **don't** click the "Upload" button, the image will be added when the sighting is created).  The more
 sightings you add (in more places) the more interesting the map will look, and the more stuff the carousel view will show.
 
 ## Icon overview
@@ -120,9 +120,6 @@ Users not logged in are obviously read-only.  Logged in users can create/edit th
 (aside from of course the admin user).
 
 ## Implementation Notes
-The sightings logic is implemented in AngularJS with some Google Maps stuff.
-It's implemented as a drupal block and expects the sight to have just (at least)
-a main page with the bird sightings block added as its main content (all alone).
-The login block should be placed on that single page in the left side bar and will
-be hidden/shown by the app as necessary.
+The sightings logic is implemented in AngularJS with some Google Maps stuff.  Most of the JS/CSS dependencies are made
+local via the bower dependencies but the Google Maps API and MarkerCluster JS is being pulled off the net.
 
